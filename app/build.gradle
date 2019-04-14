@@ -1,0 +1,169 @@
+apply plugin: 'com.android.application'
+apply plugin: 'at.allaboutapps.gradle-plugin'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+//apply plugin: 'io.fabric'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.florianschoeberl.hiringfs"
+
+        minSdkVersion 21
+        targetSdkVersion 28
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary true
+
+        manifestPlaceholders = [apiKey: "secret"] // use with ${apiKey} in manifest
+
+        resConfigs "de" // todo specify default locale(s)
+    }
+
+    buildTypes {
+        debug {
+            aaptOptions {
+                // Speed up debug builds
+                cruncherEnabled = false
+            }
+            // prevent crashlytics from updating its id
+            ext.alwaysUpdateBuildId = false
+        }
+    }
+
+    flavorDimensions "environment"
+
+    productFlavors {
+        development {
+            dimension "environment"
+            ext.neverBuildRelease = true
+
+            buildConfigField "String", "SERVER_API_URL", "\"https://debug.example.com/\""
+        }
+        staging {
+            dimension "environment"
+            ext.neverBuildRelease = true
+
+            buildConfigField "String", "SERVER_API_URL", "\"https://staging.example.com/\""
+        }
+        live {
+            dimension "environment"
+
+            buildConfigField "String", "SERVER_API_URL", "\"https://www.example.com/\""
+        }
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries true
+    }
+
+    androidExtensions {
+        experimental = true
+    }
+}
+
+ext {
+    androidxVersion = "1.0.2"
+    kotlinExtensionsVersion = "1.0.1"
+    glideVersion = "4.8.0"
+    lifecycleVersion = "1.1.1"
+    rxKotlinVersion = "2.2.0"
+}
+
+kapt {
+    arguments {
+        if (project.devBuild) {
+            // disable code formatting on local builds
+            arg("dagger.formatGeneratedSource", "disabled")
+        }
+    }
+}
+
+dependencies {
+    implementation project(':networking')
+    implementation project(':unwrapretrofit')
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.appcompat:appcompat:$androidxVersion"
+
+    // aaa libs
+    implementation 'at.allaboutapps.a3utilities:a3utilities:1.0.3'
+    implementation 'at.allaboutapps.recyclerview:a3recyclerview-decorations:1.0.1'
+
+    // crash reporting
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true
+    }
+
+    //Android Kotlin Extensions by Google
+    //https://developer.android.com/kotlin/ktx
+    implementation "androidx.core:core-ktx:$kotlinExtensionsVersion"
+
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+
+    // Support library depends on this lightweight import
+    implementation "android.arch.lifecycle:runtime:$lifecycleVersion"
+
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    kapt "android.arch.lifecycle:compiler:$lifecycleVersion"
+
+    // optional - ReactiveStreams support for LiveData
+    implementation "android.arch.lifecycle:reactivestreams:$lifecycleVersion"
+
+    //image loading
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+
+    // logging
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    implementation "io.reactivex.rxjava2:rxjava:$rxJava2Version"
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+
+    // networking
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiVersion"
+
+    // dependency injection
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+}
+
+task updateStrings(type: Exec, group: "localization") {
+    def executableName
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        executableName = ["cmd", '/c', "google-docs-i18n-strings"]
+    } else {
+        executableName = ["google-docs-i18n-strings"]
+
+    }
+    commandLine = (executableName + [
+            "-a", "src/main/res",
+            "-p", "android",
+            "-s", "hiringfs"
+    ])
+}
