@@ -83,6 +83,7 @@ ext {
     glideVersion = "4.8.0"
     lifecycleVersion = "1.1.1"
     rxKotlinVersion = "2.2.0"
+    roomVersion = "1.1.1"
 }
 
 kapt {
@@ -103,7 +104,15 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidxVersion"
 
     // design
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation "com.google.android.material:material:1.0.0"
+
+    // room
+    implementation "androidx.room:room-runtime:2.0.0"
+    kapt "androidx.room:room-compiler:2.0.0"
+
+    // coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.27.0-eap13'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13'
 
     // aaa libs
     implementation 'at.allaboutapps.a3utilities:a3utilities:1.0.3'
