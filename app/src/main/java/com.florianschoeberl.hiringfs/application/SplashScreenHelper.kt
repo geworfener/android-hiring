@@ -12,7 +12,7 @@ internal class SplashScreenHelper : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         // apply the actual theme
-        activity.setTheme(R.style.AppTheme)
+        activity.setTheme(R.style.AppTheme_NoActionBar)
     }
 
     // region unused overrides

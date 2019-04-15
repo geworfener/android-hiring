@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">hiringfs</string>
+    <string name="app_name">all about clubs</string>
+    <string name="menu_sort">Sortierung</string>
 </resources>

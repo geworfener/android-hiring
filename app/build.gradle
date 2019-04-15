@@ -102,6 +102,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$androidxVersion"
 
+    // design
+    implementation 'com.google.android.material:material:1.0.0'
+
     // aaa libs
     implementation 'at.allaboutapps.a3utilities:a3utilities:1.0.3'
     implementation 'at.allaboutapps.recyclerview:a3recyclerview-decorations:1.0.1'
