@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.florianschoeberl.hiringfs"
 
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
