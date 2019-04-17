@@ -3,41 +3,38 @@ package com.florianschoeberl.hiringfs.features.start.ui.main
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.florianschoeberl.hiringfs.model.Club
 import com.florianschoeberl.hiringfs.model.ClubDB
 import com.florianschoeberl.hiringfs.model.ClubRepo
-import kotlinx.coroutines.*
-import kotlinx.coroutines.android.Main
+import com.florianschoeberl.hiringfs.networking.services.ApiService
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
-class MainViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
-
-    private var parentJob = Job()
-    private val coroutineContext: CoroutineContext
-        get() = parentJob + Dispatchers.Main
-    private val scope = CoroutineScope(coroutineContext)
+class MainViewModel @Inject constructor(application: Application, apiService: ApiService) : AndroidViewModel(application) {
 
     private val repo: ClubRepo
-    val all: LiveData<List<Club>>
+
+    private val clubsAscending: LiveData<List<Club>>
+    private val clubsDescending: LiveData<List<Club>>
+
+    val clubs = MediatorLiveData<List<Club>>()
+
+    private var ascending = true
 
     init {
         val clubsDao = ClubDB.getDatabase(application).clubDao()
-        repo = ClubRepo(clubsDao)
-        all = repo.all
+        repo = ClubRepo(clubsDao, apiService)
+
+        clubsAscending = repo.getClubsAsc()
+        clubsDescending = repo.getClubsDesc()
+
+        clubs.addSource(clubsAscending) { result -> result?.let { clubs.value = it } }
+        clubs.addSource(clubsDescending) { }
     }
 
-    fun insert(club: Club) = scope.launch(Dispatchers.IO) {
-        repo.insert(club)
-    }
-
-    fun delete() = scope.launch(Dispatchers.IO) {
-        repo.delete()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        parentJob.cancel()
-    }
+    fun changeOrdering() = when (ascending) {
+        true -> clubsDescending.value?.let { clubs.value = it }
+        false -> clubsAscending.value?.let { clubs.value = it }
+    }.also { ascending = !ascending }
 
 }

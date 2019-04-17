@@ -42,18 +42,18 @@ android {
             dimension "environment"
             ext.neverBuildRelease = true
 
-            buildConfigField "String", "SERVER_API_URL", "\"https://debug.example.com/\""
+            buildConfigField "String", "SERVER_API_URL", "\"https://public.allaboutapps.at/hiring/\""
         }
         staging {
             dimension "environment"
             ext.neverBuildRelease = true
 
-            buildConfigField "String", "SERVER_API_URL", "\"https://staging.example.com/\""
+            buildConfigField "String", "SERVER_API_URL", "\"https://public.allaboutapps.at/hiring/\""
         }
         live {
             dimension "environment"
 
-            buildConfigField "String", "SERVER_API_URL", "\"https://www.example.com/\""
+            buildConfigField "String", "SERVER_API_URL", "\"https://public.allaboutapps.at/hiring/\""
         }
     }
 

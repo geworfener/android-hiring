@@ -1,19 +1,52 @@
 package com.florianschoeberl.hiringfs.model
 
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
+import com.florianschoeberl.hiringfs.networking.services.ApiService
+import kotlinx.coroutines.*
+import kotlinx.coroutines.android.Main
+import timber.log.Timber
+import java.lang.Exception
+import kotlin.coroutines.CoroutineContext
 
-class ClubRepo(private val clubDao: ClubDao) {
 
-    val all: LiveData<List<Club>> = clubDao.getAll()
+class ClubRepo constructor(private val clubDao: ClubDao, private val apiService: ApiService) {
 
-    @WorkerThread
-    suspend fun insert(club: Club) {
-        clubDao.insert(club)
+    private var parentJob = Job()
+    private val coroutineContext: CoroutineContext
+        get() = parentJob + Dispatchers.Main
+    private val scope = CoroutineScope(coroutineContext)
+
+    fun getClubsAsc(): LiveData<List<Club>> {
+        refresh()
+        return clubDao.getAllAsc()
     }
 
-    @WorkerThread
-    suspend fun delete() {
-        clubDao.deleteAll()
+    fun getClubsDesc(): LiveData<List<Club>> {
+        refresh()
+        return clubDao.getAllDesc()
+    }
+
+    private fun refresh() {
+        scope.launch(Dispatchers.IO) {
+            try {
+                val response = apiService.getClubs().execute()
+
+                if (response.isSuccessful) {
+                    val list = response.body()!!
+                            .map { c ->
+                                Club(
+                                        name = c.name
+                                        , country = c.country
+                                        , value = c.value
+                                        , image = c.image)
+                            }
+
+                    clubDao.replaceAll(list)
+                }
+
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
     }
 }

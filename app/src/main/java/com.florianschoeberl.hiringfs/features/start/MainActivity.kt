@@ -33,7 +33,7 @@ class MainActivity : BaseActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
         recyclerView.addItemDecoration(A3SeparatorDecoration(resources, ResourcesCompat.getColor(resources, R.color.colorDivider, null)))
 
-        viewModel.all.observe(this, Observer { clubs -> clubs.let { adapter.setClubs(it) }})
+        viewModel.clubs.observe(this, Observer { clubs -> clubs.let { adapter.setClubs(it) } })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -42,20 +42,8 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    private var counter: Int = 0
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.getItemId()
-
-        //todo tests
-        if (counter == 0) {
-            viewModel.delete()
-        } else {
-            viewModel.insert(Club(counter, "testclub", "testcountry", 500, "url"))
-        }
-
-        counter++
-
+        viewModel.changeOrdering()
         return super.onOptionsItemSelected(item)
     }
 }
