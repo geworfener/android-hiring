@@ -3,4 +3,6 @@
     <string name="menu_sort">Sortierung</string>
     <string name="contentdescription_image">Wappen</string>
     <string name="club_value">%1$d Millionen</string>
+    <string name="loading">Lade Daten …</string>
+    <string name="menu_refresh">Aktualisieren</string>
 </resources>

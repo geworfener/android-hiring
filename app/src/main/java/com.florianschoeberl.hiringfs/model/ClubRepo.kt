@@ -1,6 +1,7 @@
 package com.florianschoeberl.hiringfs.model
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.florianschoeberl.hiringfs.networking.services.ApiService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.Main
@@ -26,8 +27,9 @@ class ClubRepo constructor(private val clubDao: ClubDao, private val apiService:
         return clubDao.getAllDesc()
     }
 
-    private fun refresh() {
+    fun refresh() {
         scope.launch(Dispatchers.IO) {
+            isLoading.postValue(true)
             try {
                 val response = apiService.getClubs().execute()
 
@@ -46,7 +48,11 @@ class ClubRepo constructor(private val clubDao: ClubDao, private val apiService:
 
             } catch (e: Exception) {
                 Timber.e(e)
+            } finally {
+                isLoading.postValue(false)
             }
         }
     }
+
+    val isLoading = MutableLiveData<Boolean>()
 }

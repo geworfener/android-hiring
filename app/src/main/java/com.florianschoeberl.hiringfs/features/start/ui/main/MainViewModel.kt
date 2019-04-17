@@ -28,13 +28,18 @@ class MainViewModel @Inject constructor(application: Application, apiService: Ap
         clubsAscending = repo.getClubsAsc()
         clubsDescending = repo.getClubsDesc()
 
-        clubs.addSource(clubsAscending) { result -> result?.let { clubs.value = it } }
+        clubs.addSource(clubsAscending) { result -> result?.let { clubs.postValue(it) } }
         clubs.addSource(clubsDescending) { }
     }
 
     fun changeOrdering() = when (ascending) {
-        true -> clubsDescending.value?.let { clubs.value = it }
-        false -> clubsAscending.value?.let { clubs.value = it }
+        true  -> clubsDescending.value?.let { clubs.postValue(it) }
+        false -> clubsAscending.value?.let { clubs.postValue(it) }
     }.also { ascending = !ascending }
 
+    fun getIsLoading(): LiveData<Boolean> {
+        return repo.isLoading
+    }
+
+    fun refresh() = repo.refresh()
 }

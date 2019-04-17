@@ -8,4 +8,10 @@
         android:title="@string/menu_sort"
         android:icon="@drawable/ic_filter"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/menuRefresh"
+        android:orderInCategory="99"
+        android:title="@string/menu_refresh"
+        android:icon="@android:drawable/stat_notify_sync"
+        app:showAsAction="ifRoom"/>
 </menu>
