@@ -46,7 +46,8 @@ class ClubRepo constructor(private val clubDao: ClubDao, private val apiService:
                     clubDao.replaceAll(list)
                 }
 
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                //todo error handling
                 Timber.e(e)
             } finally {
                 isLoading.postValue(false)

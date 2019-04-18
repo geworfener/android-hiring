@@ -5,4 +5,5 @@
     <string name="club_value">%1$d Millionen</string>
     <string name="loading">Lade Daten …</string>
     <string name="menu_refresh">Aktualisieren</string>
+    <string name="text_detail">Der Club &lt;b>%1$s&lt;/b> aus %2$s hat einen Wert von %3$d Millionen Euro.</string>
 </resources>

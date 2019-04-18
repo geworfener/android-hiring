@@ -1,9 +1,12 @@
 package com.florianschoeberl.hiringfs.model
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "club")
 data class Club(@PrimaryKey(autoGenerate = true) val id: Int = 0,
 
@@ -13,4 +16,4 @@ data class Club(@PrimaryKey(autoGenerate = true) val id: Int = 0,
 
                 @ColumnInfo(name = "value") val value: Long,
 
-                @ColumnInfo(name = "image") val image: String)
+                @ColumnInfo(name = "image") val image: String) : Parcelable
