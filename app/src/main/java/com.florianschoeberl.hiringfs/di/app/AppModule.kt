@@ -7,6 +7,8 @@ import android.preference.PreferenceManager
 import at.allaboutapps.retrofit.converter.unwrap.UnwrapConverterFactory
 import com.florianschoeberl.hiringfs.BuildConfig
 import com.florianschoeberl.hiringfs.di.viewmodel.ViewModelModule
+import com.florianschoeberl.hiringfs.model.ClubDB
+import com.florianschoeberl.hiringfs.model.ClubRepo
 import com.florianschoeberl.hiringfs.networking.UserAgentInterceptor
 import com.florianschoeberl.hiringfs.networking.services.ApiService
 import com.squareup.moshi.Moshi
@@ -72,6 +74,13 @@ class AppModule {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
                 .build()
                 .create(ApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideClubRepo(app: Application, apiService: ApiService): ClubRepo {
+        val clubsDao = ClubDB.getDatabase(app).clubDao()
+        return ClubRepo(clubsDao, apiService)
     }
 
     @Reusable

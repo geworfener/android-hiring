@@ -5,29 +5,21 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.florianschoeberl.hiringfs.model.Club
-import com.florianschoeberl.hiringfs.model.ClubDB
 import com.florianschoeberl.hiringfs.model.ClubRepo
-import com.florianschoeberl.hiringfs.networking.services.ApiService
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(application: Application, apiService: ApiService) : AndroidViewModel(application) {
+class MainViewModel @Inject constructor(application: Application, clubRepo: ClubRepo) : AndroidViewModel(application) {
 
-    private val repo: ClubRepo
+    private val repo: ClubRepo = clubRepo
 
-    private val clubsAscending: LiveData<List<Club>>
-    private val clubsDescending: LiveData<List<Club>>
+    private val clubsAscending: LiveData<List<Club>> = repo.getClubsAsc()
+    private val clubsDescending: LiveData<List<Club>> = repo.getClubsDesc()
 
     val clubs = MediatorLiveData<List<Club>>()
 
     private var ascending = true
 
     init {
-        val clubsDao = ClubDB.getDatabase(application).clubDao()
-        repo = ClubRepo(clubsDao, apiService)
-
-        clubsAscending = repo.getClubsAsc()
-        clubsDescending = repo.getClubsDesc()
-
         clubs.addSource(clubsAscending) { result -> result?.let { clubs.postValue(it) } }
         clubs.addSource(clubsDescending) { }
     }
