@@ -20,6 +20,10 @@ import androidx.core.text.HtmlCompat
 import kotlinx.android.synthetic.main.detail_activity.image
 
 
+const val TRANSITION_NAME = "TRANSITION_NAME"
+const val CURRENT_ITEM = "CURRENT_ITEM"
+
+
 class DetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +35,8 @@ class DetailActivity : BaseActivity() {
         supportPostponeEnterTransition()
 
         val extras = intent.extras
-        val club: Club = extras!!.getParcelable("CURRENT_ITEM")!! //todo
+
+        val club: Club? = extras?.getParcelable(CURRENT_ITEM)
 
         val imageView = image
         val detailView = detail
@@ -46,24 +51,24 @@ class DetailActivity : BaseActivity() {
             window.enterTransition = fade
             window.exitTransition = fade
 
-            val imageTransitionName = extras.getString("TRANSITION_NAME")
+            val imageTransitionName = extras?.getString(TRANSITION_NAME)
             imageView.transitionName = imageTransitionName
         }
 
-        title = club.name
+        title = club?.name
 
-        val detailText: String = resources.getString(R.string.text_detail, club.name, club.country, club.value)
+        val detailText: String = resources.getString(R.string.text_detail, club?.name, club?.country, club?.value)
         val styledDetailText: Spanned = HtmlCompat.fromHtml(detailText, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         detailView.text = styledDetailText
-        countryView.text = club.country
+        countryView.text = club?.country
 
         val options = RequestOptions()
                 .dontAnimate()
                 .error(R.drawable.club_placeholder)
 
         Glide.with(this)
-                .load(club.image)
+                .load(club?.image)
                 .apply(options)
                 .listener(object : RequestListener<Drawable> {
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {

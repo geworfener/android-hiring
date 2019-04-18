@@ -14,8 +14,10 @@ import com.florianschoeberl.hiringfs.R
 import com.florianschoeberl.hiringfs.model.Club
 import com.bumptech.glide.request.RequestOptions
 import androidx.core.view.ViewCompat
+import com.florianschoeberl.hiringfs.features.start.CURRENT_ITEM
 import com.florianschoeberl.hiringfs.features.start.DetailActivity
 import com.florianschoeberl.hiringfs.features.start.MainActivity
+import com.florianschoeberl.hiringfs.features.start.TRANSITION_NAME
 import kotlinx.android.synthetic.main.recyclerview_item.view.*
 
 
@@ -45,8 +47,8 @@ class ClubAdapter internal constructor(
         val current = clubs[position]
         holder.name.text = current.name
         holder.country.text = current.country
-        holder.value.text = holder.itemView.resources.getString(R.string.club_value, current.value) //todo
-        Glide.with(holder.itemView.context) //todo
+        holder.value.text = holder.itemView.resources.getString(R.string.club_value, current.value)
+        Glide.with(holder.itemView.context) //todo?
                 .load(current.image)
                 .apply(options)
                 .into(holder.image)
@@ -57,12 +59,11 @@ class ClubAdapter internal constructor(
             val context = v.context
             val intent = Intent(context as MainActivity, DetailActivity::class.java)
 
-
-            intent.putExtra("CURRENT_ITEM", current)
-            intent.putExtra("TRANSITION_NAME", ViewCompat.getTransitionName(holder.image))
+            intent.putExtra(CURRENT_ITEM, current)
+            intent.putExtra(TRANSITION_NAME, ViewCompat.getTransitionName(holder.image))
 
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    context as MainActivity, holder.image, ViewCompat.getTransitionName(holder.image)!!) //todo
+                    context as MainActivity, holder.image, ViewCompat.getTransitionName(holder.image)!!)
 
             context.startActivity(intent, options.toBundle())
         }
